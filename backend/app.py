@@ -97,15 +97,20 @@ def summary():
         return jsonify({"error": "invalid document_id"}), 400
 
     # Truncate long lease text so prompt isn't too long
-    text = documents[doc_id]["raw_text"][:6000]
+    raw_text = documents[doc_id]["raw_text"]
 
-    # Build the prompt
-    prompt = build_summary_prompt(text)
+    # Clip to avoid sending an enormous prompt (helps speed + avoids timeouts)
+    max_chars = 8000
+    clipped = raw_text[:max_chars]
+
+    prompt = build_summary_prompt(clipped)
+    system_prompt = "You are an assistant that summarizes residential leases."
 
     summary_text = call_ollama_chat(
         model=OLLAMA_MODEL,
-        system_prompt="Summarize the lease.",
+        system_prompt=system_prompt,
         user_prompt=prompt,
+        timeout=240,  # give more room than the previous 120s
     )
 
     return jsonify({"summary": summary_text}), 200

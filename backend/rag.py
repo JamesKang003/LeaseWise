@@ -87,36 +87,65 @@ def retrieve_relevant_chunks(
 
 # --------- LLM via Ollama --------- #
 
+import json
+import requests
+
 def call_ollama_chat(
     model: str,
     system_prompt: str,
     user_prompt: str,
-    url: str = "http://localhost:11434/api/chat"
+    url: str = "http://localhost:11434/api/chat",
+    as_json: bool = False,
+    timeout: int = 180,
 ) -> str:
     """
-    Call a local Ollama model via its HTTP chat API.
-    We explicitly disable streaming (stream=false) so we get a single JSON object.
+    Robust Ollama caller.
+    - as_json=True => include format='json' to strongly encourage pure JSON.
+    - timeout in seconds (increased from 120 to handle longer docs).
     """
+
     payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            {"role": "user", "content": user_prompt},
         ],
-        "stream": False  # 👈 IMPORTANT: disable streaming
+        "stream": False,
     }
 
-    try:
-        resp = requests.post(url, json=payload, timeout=120)
-        resp.raise_for_status()
-        data = resp.json()  # single JSON object
+    if as_json:
+        # Ollama hint to keep output in JSON form
+        payload["format"] = "json"
 
-        # Expected shape: {"model": "...", "message": {"role": "assistant", "content": "..."}, ...}
-        message = data.get("message", {})
+    try:
+        resp = requests.post(url, json=payload, timeout=timeout)
+        resp.raise_for_status()
+
+        raw = resp.text.strip()
+
+        # Ollama can sometimes send multiple JSON lines; take the last valid one.
+        last_json = None
+        for line in raw.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                last_json = json.loads(line)
+            except Exception:
+                continue
+
+        if last_json is None:
+            # For non-JSON use cases, just return raw text
+            return raw
+
+        message = last_json.get("message", {})
         content = message.get("content", "")
+
         return content.strip() if isinstance(content, str) else str(content)
+
     except Exception as e:
         return f"Error calling local LLM: {e}"
+
 
 
 def build_qa_prompt(
