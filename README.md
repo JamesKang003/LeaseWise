@@ -1,4 +1,4 @@
-🚀 LeaseWise — Local AI Lease Analyzer
+LeaseWise — Local AI Lease Analyzer
 
 LeaseWise is a full-stack, fully local AI tool for analyzing residential lease agreements.
 Upload a lease PDF and instantly:
@@ -15,14 +15,14 @@ All powered by local models using Ollama, with zero API costs
 
 Everything runs 100% on your machine — no cloud, no external servers.
 
-✨ Features
-📝 1. Upload & Process PDFs
+Features:
+1. Upload & Process PDFs
 
 Parse multi-page leases using pdfplumber.
 
 Automatically chunk text + embed it for search.
 
-📄 2. Extract Key Lease Terms
+2. Extract Key Lease Terms
 
 Automatically extracts structured data such as:
 
@@ -42,7 +42,7 @@ Pet rules
 
 Returned as clean, machine-readable JSON.
 
-⚠️ 3. Red Flag Scanner
+3. Red Flag Scanner
 
 Uses AI to identify clauses that may be:
 
@@ -56,11 +56,11 @@ Problematic compared to standard practices
 
 Highlights severity (low/medium/high), clause text, and explanation.
 
-🧠 4. Local AI Summary
+4. Local AI Summary
 
 Generate friendly, human-readable summaries of long leases.
 
-🔍 5. Question Answering (RAG)
+5. Question Answering (RAG)
 
 Ask any question about your lease:
 
