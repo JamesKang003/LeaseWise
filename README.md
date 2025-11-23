@@ -66,6 +66,39 @@ Ask any question about your lease:
 
 “Can the landlord enter without notice?”
 
-“Who pays for internet?”
+Tech Stack
+Frontend
 
-Answers come from your lease, not hallucinations.
+React (Vite)
+
+Custom UI (no UI libraries)
+
+Fetch-based API integration
+
+Backend
+
+Python + Flask
+
+pdfplumber (text extraction)
+
+sentence-transformers (all-MiniLM-L6-v2)
+
+Custom chunking + embedding + retrieval pipeline
+
+Red flag + summary prompts
+
+Local AI
+
+Ollama (e.g., llama3)
+
+Non-streaming JSON response parsing
+
+Full end-to-end RAG functionality
+
+Design Philosophy
+
+Local-first
+
+Zero API cost
+
+Clean UX with intuitive workflow
