@@ -1,0 +1,7 @@
+flask
+flask-cors
+pdfplumber
+sentence-transformers
+torch
+numpy
+requests
