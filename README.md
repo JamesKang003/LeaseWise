@@ -174,21 +174,3 @@ Ensure Ollama is running:
 
 Frontend runs at:
 http://localhost:5173
-
----
-
-## 📈 Why This Project Stands Out
-
-LeaseWise demonstrates:
-
-- Full-stack engineering (React + Flask)
-- Custom RAG system implementation
-- Embedding-based semantic retrieval
-- Local LLM orchestration
-- Structured prompt engineering
-- Robust JSON parsing and error handling
-- Real-world document AI application design
-
-This is not a wrapper around an AI API — it is a ground-up implementation of a modern LLM-powered system.
-
----
