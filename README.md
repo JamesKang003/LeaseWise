@@ -1,111 +1,194 @@
-🚀 LeaseWise — Local AI Lease Analyzer
+# 🏠 LeaseWise
 
-LeaseWise is a full-stack, fully local AI tool for analyzing residential lease agreements.
-Upload a lease PDF and instantly:
+**LeaseWise** is a full-stack, fully local AI-powered lease analysis system designed to help tenants understand residential lease agreements with clarity and confidence.
 
-Extract key terms (rent, deposit, dates, utilities, notice periods)
+Unlike many AI demos that rely on external APIs, managed vector databases, or cloud inference, LeaseWise implements a custom Retrieval-Augmented Generation (RAG) pipeline from scratch — running entirely on the user’s machine with zero external dependencies.
 
-Scan for potential red flags
+Built to demonstrate real systems-level understanding of modern LLM workflows, LeaseWise combines semantic retrieval, structured extraction, red-flag detection, and natural-language reasoning into a cohesive AI application.
 
-Generate a clean natural-language summary
+---
 
-Ask natural-language questions grounded in your lease using RAG
+## 🚀 What It Does
 
-All powered by local models using Ollama, with zero API costs
+Upload a residential lease PDF and instantly:
 
-Everything runs 100% on your machine — no cloud, no external servers.
+- 📄 Extract structured key terms (rent, dates, deposit, utilities, notice periods)
+- ⚠️ Detect potentially tenant-unfriendly or high-risk clauses
+- 🧠 Generate plain-language summaries
+- 💬 Ask natural-language questions grounded strictly in the lease text
 
-✨ Features
-📝 1. Upload & Process PDFs
+All processing happens locally using open-source models.
 
-Parse multi-page leases using pdfplumber.
+---
 
-Automatically chunk text + embed it for search.
+## 🧠 Core Technical Architecture
 
-📄 2. Extract Key Lease Terms
+LeaseWise does **not** use LangChain, FAISS, Chroma, or external vector database services.
 
-Automatically extracts structured data such as:
+Instead, it implements a custom in-memory RAG pipeline:
 
-Monthly rent
+### 1️⃣ PDF Processing
+- Extracts raw lease text using `pdfplumber`
+- Cleans and normalizes formatting artifacts
 
-Security deposit
+### 2️⃣ Semantic Chunking
+- Splits text into overlapping fixed-length chunks
+- Preserves contextual continuity across legal sections
 
-Lease start & end dates
+### 3️⃣ Embedding Generation
+- Uses `sentence-transformers` (MiniLM)
+- Converts each chunk into dense vector embeddings locally
 
-Utility responsibilities
+### 4️⃣ Custom Similarity Retrieval
+- Computes cosine similarity using NumPy
+- Selects Top-K relevant chunks for query grounding
+- Stores embeddings in memory (no vector DB)
 
-Late fee policy
+### 5️⃣ LLM-Orchestrated Reasoning
+- Sends retrieved context to a local LLM via **Ollama** (e.g., Llama 3)
+- Uses structured prompt engineering
+- Enforces JSON-mode responses for deterministic extraction
+- Implements timeout handling and safe response parsing
 
-Notice requirements
+---
 
-Pet rules
+## 📦 Features
 
-Returned as clean, machine-readable JSON.
+### 🗂 Structured Lease Term Extraction
+Extracts machine-readable fields such as:
+- Monthly rent
+- Lease start & end dates
+- Security deposit
+- Utility responsibilities
+- Notice requirements
 
-⚠️ 3. Red Flag Scanner
+Implemented using JSON-constrained prompting with robust parsing safeguards.
 
-Uses AI to identify clauses that may be:
+---
 
-Tenant-unfriendly
+### ⚠️ Red Flag Clause Detection
+Identifies clauses that may be:
+- Excessively punitive
+- Vague or ambiguous
+- Potentially tenant-disadvantaging
 
-Vague or overly broad
+Uses LLM-based classification with structured severity labeling.
 
-Excessively punitive
+---
 
-Problematic compared to standard practices
+### 🧾 Plain-Language Summarization
+Transforms dense legal language into a concise, human-readable overview.
 
-Highlights severity (low/medium/high), clause text, and explanation.
+---
 
-🧠 4. Local AI Summary
+### 💬 Context-Grounded Q&A
+Users can ask:
+- “Can the landlord enter without notice?”
+- “Who pays for internet?”
+- “What happens if rent is late?”
 
-Generate friendly, human-readable summaries of long leases.
+Responses are generated strictly from retrieved lease context to reduce hallucination.
 
-🔍 5. Question Answering (RAG)
+---
 
-Ask any question about your lease:
+## 🏗️ Tech Stack
 
-“Can the landlord enter without notice?”
+**Frontend**
+- React (Vite)
+- Custom UI (no component libraries)
+- Fetch-based API integration
 
-“Who pays for internet?”
+**Backend**
+- Python
+- Flask
+- pdfplumber
+- NumPy
+- sentence-transformers (MiniLM)
 
-Answers come from your lease, not hallucinations.
+**LLM Runtime**
+- Ollama (local LLM runtime)
+- Llama 3 (or compatible open-source models)
+- JSON-mode structured prompting
 
-🏗️ Tech Stack
-Frontend
+**Architecture Concepts**
+- Retrieval-Augmented Generation (RAG)
+- Semantic embeddings
+- Cosine similarity search
+- Context window management
+- Deterministic response parsing
 
-React (Vite)
+---
 
-Custom UI (no UI libraries)
+## 🔒 Local-First Design Philosophy
 
-Fetch-based API integration
+- No OpenAI API  
+- No Hugging Face inference endpoints  
+- No vector database services  
+- No AWS or cloud infrastructure  
+- Zero API cost  
+- Full document privacy  
 
-Backend
+All processing runs locally.
 
-Python + Flask
+---
 
-pdfplumber (text extraction)
+## 🛠️ How to Run
 
-sentence-transformers (all-MiniLM-L6-v2)
+### 1️⃣ Backend Setup
 
-Custom chunking + embedding + retrieval pipeline
+    cd backend
+    python -m venv venv
 
-Red flag + summary prompts
+    # Windows PowerShell only:
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    .\venv\Scripts\activate
 
-Local AI
+    pip install -r requirements.txt
+    python app.py
 
-Ollama (e.g., llama3)
+Backend runs at:
+http://localhost:5000
 
-Non-streaming JSON response parsing
+---
 
-Full end-to-end RAG functionality
+### 2️⃣ Install Ollama
 
-Design Philosophy
+Download from:
+https://ollama.com
 
-Local-first
+Pull a model:
 
-Zero API cost
+    ollama pull llama3
 
-Clean UX with intuitive workflow
+Ensure Ollama is running:
 
-📦 Installation & Setup
-1. Clone the repo
+    ollama list
+
+---
+
+### 3️⃣ Frontend Setup
+
+    cd frontend
+    npm install
+    npm run dev
+
+Frontend runs at:
+http://localhost:5173
+
+---
+
+## 📈 Why This Project Stands Out
+
+LeaseWise demonstrates:
+
+- Full-stack engineering (React + Flask)
+- Custom RAG system implementation
+- Embedding-based semantic retrieval
+- Local LLM orchestration
+- Structured prompt engineering
+- Robust JSON parsing and error handling
+- Real-world document AI application design
+
+This is not a wrapper around an AI API — it is a ground-up implementation of a modern LLM-powered system.
+
+---
